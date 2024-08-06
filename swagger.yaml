@@ -1,0 +1,368 @@
+# @format
+
+openapi: 3.0.0
+info:
+  title: Cars API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local server
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUser"
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUser"
+      responses:
+        "200":
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /cars:
+    post:
+      tags:
+        - Cars
+      summary: Create a new car ad
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Car"
+      responses:
+        "201":
+          description: Car ad created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarResponse"
+    get:
+      tags:
+        - Cars
+      summary: Get all car ads
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+          description: Filter by status
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Filter by name
+        - name: price
+          in: query
+          schema:
+            type: number
+          description: Filter by price
+        - name: year
+          in: query
+          schema:
+            type: number
+          description: Filter by year
+        - name: mileage
+          in: query
+          schema:
+            type: number
+          description: Filter by mileage
+        - name: fuel
+          in: query
+          schema:
+            type: string
+          description: Filter by fuel type
+        - name: transmission
+          in: query
+          schema:
+            type: string
+          description: Filter by transmission type
+        - name: registeredIn
+          in: query
+          schema:
+            type: string
+          description: Filter by registration location
+        - name: assembly
+          in: query
+          schema:
+            type: string
+          description: Filter by assembly type
+        - name: bodyType
+          in: query
+          schema:
+            type: string
+          description: Filter by body type
+        - name: color
+          in: query
+          schema:
+            type: string
+          description: Filter by color
+        - name: engineCapacity
+          in: query
+          schema:
+            type: number
+          description: Filter by engine capacity
+        - name: sort
+          in: query
+          schema:
+            type: string
+          description: Sort results
+        - name: limit
+          in: query
+          schema:
+            type: number
+          description: Number of results per page
+        - name: page
+          in: query
+          schema:
+            type: number
+          description: Page number
+      responses:
+        "200":
+          description: A list of car ads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarsResponse"
+  /cars/expired:
+    get:
+      tags:
+        - Cars
+      summary: Get expired car ads
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: A list of expired car ads
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarsResponse"
+  /cars/{id}:
+    get:
+      tags:
+        - Cars
+      summary: Get a car ad by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A single car ad
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarResponse"
+    patch:
+      tags:
+        - Cars
+      summary: Update a car ad by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Car"
+      responses:
+        "200":
+          description: Car ad updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarResponse"
+    delete:
+      tags:
+        - Cars
+      summary: Delete a car ad by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Car ad deleted successfully
+components:
+  schemas:
+    RegisterUser:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Bob
+        email:
+          type: string
+          example: bob@gmail.com
+        password:
+          type: string
+          example: secret
+    LoginUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: bob@gmail.com
+        password:
+          type: string
+          example: secret
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+        token:
+          type: string
+    Car:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Toyota Corolla
+        description:
+          type: string
+          example: A well-maintained car with low mileage
+        price:
+          type: number
+          example: 15000
+        year:
+          type: number
+          example: 2015
+        mileage:
+          type: number
+          example: 50000
+        fuel:
+          type: string
+          example: Petrol
+        transmission:
+          type: string
+          example: Automatic
+        registeredIn:
+          type: string
+          example: California
+        assembly:
+          type: string
+          example: Local
+        bodyType:
+          type: string
+          example: Sedan
+        color:
+          type: string
+          example: White
+        engineCapacity:
+          type: number
+          example: 1800
+        status:
+          type: string
+          example: available
+        expiryDate:
+          type: string
+          format: date-time
+          example: 2024-08-01T00:00:00.000Z
+        features:
+          type: object
+          properties:
+            abs:
+              type: boolean
+              example: true
+            amFmRadio:
+              type: boolean
+              example: true
+            airBags:
+              type: boolean
+              example: true
+            airConditioning:
+              type: boolean
+              example: true
+            alloyRims:
+              type: boolean
+              example: true
+            cdPlayer:
+              type: boolean
+              example: true
+            immobilizerKey:
+              type: boolean
+              example: true
+            keylessEntry:
+              type: boolean
+              example: true
+            powerLocks:
+              type: boolean
+              example: true
+            powerMirrors:
+              type: boolean
+              example: true
+            powerSteering:
+              type: boolean
+              example: true
+            powerWindows:
+              type: boolean
+              example: true
+    CarResponse:
+      type: object
+      properties:
+        car:
+          $ref: "#/components/schemas/Car"
+    CarsResponse:
+      type: object
+      properties:
+        cars:
+          type: array
+          items:
+            $ref: "#/components/schemas/Car"
+        count:
+          type: number
+        numOfPages:
+          type: number
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
